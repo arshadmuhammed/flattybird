@@ -1,0 +1,376 @@
+<!--Author: Arshad Muhammed -->
+
+<html>
+
+<head>
+	 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flattyBird</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+    <span class="test" style="display: none;"></span>
+   <!-- <button id="up">UP</button>-->
+    <div class="game_start_btn_div">
+        <button class="restart" type="button">Game over. Start again</button>
+        <br>
+    </div>
+    <button class="cheat_test_btn">Test cheat</button>
+    <div class="box">
+        <div class='circle'>
+            <div class='body'></div>
+            <div class="chund"></div>
+            <div class="val"></div>
+            <div class="kann"></div>
+        </div>
+        
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        <div class="cloud cloud3"></div>
+        <div class="cloud cloud4"></div>
+        
+        <!--<div class="seed seed1"></div>
+        <div class="seed seed2"></div>
+        <div class="seed seed3"></div>
+        <div class="seed seed4"></div>-->
+        
+        <div class='rect' data-true='0'></div>
+        <div class='rect2' data-true='0'></div>
+    </div>
+    <div class='score_box'>
+        <p>Use SPACE bar to control your FlattyBird :)</p>
+        <p><small>Best viewed in chrome latest!</small></p>
+        <b>Hi <i class="name"></i>.Your <i class="superman">FlattyBird</i> score: </b>
+        <span class="score">0</span><br>
+        <!--Seed score : <span class="seed_score">0</span>-->
+    </div>
+   <!-- <div class="leader_board">
+        <span><b>Leader board</b></span>
+        <br>
+        <p></p>
+    </div>-->
+
+    <div class="credits">
+        <p>Developed by <a href="#" target="_blank">Arshad Muhammed</a></p>
+    </div>
+
+    <script src="jquery.min.js"></script>
+    <script type="text/javascript" >
+    	$(document).bind("mobileinit", function(){
+	  		$.mobile.autoInitializePage = false; 
+		});
+    </script>
+    <script src="jquery-mobile.min.js"></script>
+    <script type="text/javascript">
+        //var start_game = "no";
+        var rect = $('.rect');
+        var rect2 = $('.rect2');
+        var circle = $('.circle');
+        var box = $('.box');
+        /*var seed1 = $('.seed1');
+        var seed2 = $('.seed2');
+        var seed3 = $('.seed3');
+        var seed4 = $('.seed4');*/
+
+        $(function () {
+
+
+
+            /*var person = prompt('Please enter your name');
+
+            if(person != '' && person != null){
+            start_game = "yes";
+            $('.name').text(person);
+            }else{
+            start_game = "no";
+            window.location = window.location;
+            }*/
+
+            //	if(start_game == "yes"){
+            var speed = 10;
+            var game = "on";
+            var score_updated = "no";
+            var counter = 1;
+            var down = true;
+            var interval = false;
+
+            $('body').click();
+
+            // Collision detection
+            function collision($div1, $div2) {
+                var x1 = $div1.offset().left;
+                var y1 = $div1.offset().top;
+                var h1 = $div1.outerHeight(true);
+                var w1 = $div1.outerWidth(true);
+                var b1 = y1 + h1;
+                var r1 = x1 + w1;
+                var x2 = $div2.offset().left;
+                var y2 = $div2.offset().top;
+                var h2 = $div2.outerHeight(true);
+                var w2 = $div2.outerWidth(true);
+                var b2 = y2 + h2;
+                var r2 = x2 + w2;
+
+                if (b1 < y2 || y1 > b2 || r1 < x2 || x1 > r2) return false;
+                return true;
+            }
+            //ENDS
+
+
+
+            function gameover() {
+
+                game = "off";
+                clearInterval(interval);
+
+                box.css("-webkit-animation", "none");
+                box.css("-moz-animation", "none");
+                box.css("-ms-animation", "none");
+                box.css("animation", "none");
+
+
+                $('.game_start_btn_div').css('display', 'block');
+
+                /*var cheat_check = isittrue();
+
+                if(cheat_check == "No cheating"){
+                    $.post('insert_score.php',
+                        {
+                            name : person,
+                            score : parseInt($('.score').text())
+                        },
+                        function (data) {
+
+                        }
+                    );
+                }*/
+
+            }
+
+
+            setInterval(function () {
+
+                if (game == "on") {
+
+                    var bird_top = circle.css('top').replace('px', '');
+                    var x = rect.css('right').replace('px', '');
+                    
+                    var cld1_right = parseInt($('.cloud1').css('right')); 
+                    var cld2_right = parseInt($('.cloud2').css('right')); 
+                    var cld3_right = parseInt($('.cloud3').css('right')); 
+                    var cld4_right = parseInt($('.cloud4').css('right'));
+                    
+                    /*var seed1_right = parseInt($('.seed1').css('right')); 
+                    var seed2_right = parseInt($('.seed2').css('right')); 
+                    var seed3_right = parseInt($('.seed3').css('right')); 
+                    var seed4_right = parseInt($('.seed4').css('right'));
+                    
+                    var seed1_top = parseInt($('.seed1').css('top')); 
+                    var seed2_top = parseInt($('.seed2').css('top')); 
+                    var seed3_top = parseInt($('.seed3').css('top')); 
+                    var seed4_top = parseInt($('.seed4').css('top'));*/
+                    
+                    // to check whether bird collided with pillars
+                    if (collision(circle, rect) || collision(circle, rect2)) {
+
+                        gameover();
+
+                    } else { 
+                        
+                        /*if(collision(circle,seed1)) {
+                            seed1.css('display','none');
+                            $('.seed_score').text(parseInt($('.seed_score').text())+1);
+                        }else if(collision(circle,seed2)){
+                            seed2.css('display','none');
+                            $('.seed_score').text(parseInt($('.seed_score').text())+1);
+                        }else if(collision(circle,seed3)){
+                            seed3.css('display','none');
+                            $('.seed_score').text(parseInt($('.seed_score').text())+1);
+                        }else if(collision(circle,seed4)){
+                            seed4.css('display','none');
+                            $('.seed_score').text(parseInt($('.seed_score').text())+1);
+                        }
+                        
+                        // to loop the seed movement
+                        if(seed1_right >= box.width())
+                            $('.seed1').css({'right': '-50','display':'block'});
+                        else
+                            $('.seed1').css('right', seed1_right + 3);
+                        if(seed2_right >= box.width())
+                            $('.seed2').css({'right': '-50','display':'block'});
+                        else
+                            $('.seed2').css('right', seed2_right + 3);
+                        if(seed3_right >= box.width())
+                            $('.seed3').css({'right': '-50','display':'block'});
+                        else
+                            $('.seed3').css('right', seed3_right + 3);
+                        if(seed4_right >= box.width())
+                            $('.seed4').css({'right': '-50','display':'block'});
+                        else
+                            $('.seed4').css('right', seed4_right + 3);*/
+                        
+                        
+                        
+                        // to loop the cloud movement
+                        if(cld1_right >= box.width())
+                            $('.cloud1').css('right', -300);
+                        else
+                            $('.cloud1').css('right', cld1_right + 2);
+                        if(cld2_right >= box.width())
+                            $('.cloud2').css('right', -300);
+                        else
+                            $('.cloud2').css('right', cld2_right + 2);
+                        if(cld3_right >= box.width())
+                            $('.cloud3').css('right', -300);
+                        else
+                            $('.cloud3').css('right', cld3_right + 3);
+                        if(cld4_right >= box.width())
+                            $('.cloud4').css('right', -300);
+                        else
+                            $('.cloud4').css('right', cld4_right + 1);
+                        
+                        // to calculate score
+                        if (x > box.width() - circle.width()) {
+
+                            if (score_updated == "no") {
+                                $('.score').text(parseInt($('.score').text()) + 1);
+                                rect.attr('data-true', parseInt(rect.attr('data-true')) + 1);
+                            }
+                            score_updated = "yes";
+                        }
+                        
+                        // to check whether the pillars finished one execution
+                        if (x >= box.width()) {
+                            
+                            $('.rect,.rect2').css('right', '-100px');
+
+                            var new_height = ((Math.random() * 60) + 10).toFixed();
+                            var new_height2 = 60 - new_height;
+                            //if (counter % 2 == 0) {
+                                /*rect.css('height', parseInt(rect.css('height')) + parseInt(new_height) + '%');
+                                rect2.css('height', parseInt(rect2.css('height')) - parseInt(new_height) + '%');*/
+                                rect.css('height', new_height+'%');
+                                rect2.css('height', new_height2+'%');
+                            /*} else {
+                                rect.css('height', parseInt(rect.css('height')) - parseInt(new_height) + '%');
+                                rect2.css('height', parseInt(rect2.css('height')) + parseInt(new_height) + '%');
+                            }*/
+                            counter++;
+                            score_updated = "no";
+                        }
+                        
+                        
+                        // function to increase speed
+                        var score = parseInt($('.score').text());
+                        if (score != 0 && score % 3 == 0) {
+                            speed = score + 10;
+                        }
+                        
+                        // to check whether bird crossed the borders or not
+                        if (bird_top < box.height() - parseInt(circle.height()) && bird_top > 0) { //if bird doesn't touch the top and bottom borders
+                            if (down === true) {
+                                circle.css('top', parseInt(circle.css('top')) + 5 + 'px');
+                            }
+
+                            $('.rect,.rect2').css('right', parseFloat(rect.css('right')) + speed + "px");
+                            
+                            
+                            
+                            
+                            
+
+                        } else {
+                            gameover();
+                        }
+                        
+                    } //else of collision ends here
+
+                } // if game=on ends here
+
+            }, 40);
+
+            function go_up() {
+                circle.css('top', parseInt(circle.css('top')) - 15 + 'px');
+            }
+
+            // ---------------- STARTS: Functions to control flatty ---------------------
+
+            $(document).keydown(function (e) {
+                if (game == "on") {
+                    var key = e.keyCode;
+                    if (key == 32) {
+                        if (interval === false)
+                            interval = setInterval(go_up, 50);
+                        down = false;
+                    }
+                }
+            });
+
+            $(document).keyup(function (e) {
+                if (game == "on") {
+                    var key = e.keyCode;
+                    if (key == 32) {
+                        clearInterval(interval);
+                        interval = false;
+                        down = true;
+                    }
+                }
+            });
+            
+             $('#up').on('tap',function () {
+                if (game == "on") {
+                   circle.css('top', parseInt(circle.css('top')) - 15 + 'px');
+                }
+            });
+            
+             
+
+            // ---------------- ENDS:  Functions to control flatty ---------------------
+
+            $('.restart').click(function () {
+                window.location.reload();
+            });
+
+            //		}//if start_game person name ends
+
+        });
+
+        /*setInterval(function () {
+        $.post('insert_score.php',
+            {
+                action : "get_leaders"
+            },
+            function (data) {
+                if (data != "0") {
+                    $('.leader_board p').html(data);
+                }
+            }
+        );
+        },5000)*/
+
+        function isittrue() {
+            if (parseInt($('.score').text()) == parseInt(rect.attr('data-true'))) {
+                return "No cheating";
+            } else {
+                return "He/she is a cheater :p!";
+            }
+        }
+
+        $('.cheat_test_btn').click(function () {
+            var cheat_check = isittrue();
+            if (cheat_check == "No cheating") {
+                $('.score').css({
+                    'color': 'green',
+                    'font-weight': 'bold'
+                });
+            } else {
+                $('.score').css({
+                    'color': 'red',
+                    'font-weight': 'bold'
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
